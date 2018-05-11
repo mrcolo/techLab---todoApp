@@ -1,5 +1,7 @@
 # techLab Snippets - todoApp
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/mrcolo/todoApp.svg)](https://greenkeeper.io/)
+
 A simple todo app realized with Jquery, Bootstrap and ExpressJS.
 
 ### Installing
