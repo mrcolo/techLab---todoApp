@@ -1,0 +1,14 @@
+{
+  "name": "toDO",
+  "version": "0.0.1",
+  "description": "simple todo app",
+  "main": "index.js",
+  "scripts": {},
+  "author": "Francesco",
+  "license": "MIT",
+  "dependencies": {
+    "express": "latest",
+    "body-parser": "latest",
+    "jade": "^1.0.4"
+  }
+}
