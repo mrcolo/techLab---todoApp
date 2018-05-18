@@ -9,6 +9,7 @@ html(lang='en')
     title toDO - techLab
     // Bootstrap core CSS
     link(href='https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css', rel='stylesheet')
+    
     style.
       html,
       body {
@@ -58,16 +59,37 @@ html(lang='en')
       border-top-left-radius: 0;
       border-top-right-radius: 0;
       }
+      .modal {
+          display:    none;
+          position:   fixed;
+          z-index:    1000;
+          top:        0;
+          left:       0;
+          height:     100%;
+          width:      100%;
+          background: url('http://i.stack.imgur.com/FhHRx.gif') 
+                      50% 50% 
+                      no-repeat;
+      }
+      body.loading .modal {
+          overflow: hidden;   
+      }
+
+      body.loading .modal {
+          display: block;
+      }
+
   body.text-center
     .add-todo#sendData
-
+       
       h1.display-1(style="font-family:'Abril Fatface'") toDO
 
       label.sr-only(for='inputTODO') New TODO
       input#inputTODO.form-control(type='text', placeholder='Do Laundry', required='', autofocus='')
       .checkbox.mb-3
-
+      
       button.btn.btn-lg.btn-primary.btn-block(type='submit', onclick="addTODO()") Add
+      .modal
       hr
       .container
         ul.list-group
@@ -76,36 +98,55 @@ html(lang='en')
       p.mt-5.mb-3.text-muted Made with ❤️ at techLab
 
       script.
-
+        $body = $("body");
+        var isAdding = false;
+        
+        if(!isAdding){
+          $(document).on({
+            ajaxStart: function() { $body.addClass("loading");},
+            ajaxStop: function() { $body.removeClass("loading"); }    
+            });
+        }
+          
         function addTODO(){
         //create a JSON object by getting the input of the textarea
           var TODO = {
           "todo" : $( "#inputTODO" ).val()
           }
+          
           //If the string is not null, make a POST request to the server.
           if($( "#inputTODO" ).val()){
+            isAdding = true;
+            
             $.ajax({
             type: "POST",
             url: "addTODO",
             data: TODO
             })
-            //Render the array.
-            getTODO();
+            //Render the array. 
+            getTODO()
+            
+            isAdding = false;
           }
           else
             //If the user did not input anything, then we return an alert.
             alert("You did not input anything.")
         }
         //Retrieve all the todos
+        
+        
          function getTODO() {
+            
           $.get( "getTODO", function( data ) {
           var myResult = "";
           for(var i = 0; i < data.length;i++)
-            if(data[i])
+            if(data[i]){
               //we sum all the the todos together to have a single string that we can represent through HTML.
-              myResult+= "<li style=\"padding-top: 10px;\" class=\"list-group-item\">"+ data[i]+"<button id=\""+i+"\" value=\""+ i +"\"onclick=\"deleteTODO(this.id)\" type=\"button\" class=\"close\" aria-label=\"Close\"><span aria-hidden=\"true\">&times;</span></button>"
+              myResult +=  "<li style=\"padding-top: 10px;\" class=\"list-group-item\">"+ data[i].todo+"<button id=\""+data[i]._id+"\" value=\""+ i +"\"onclick=\"deleteTODO(this.id)\" type=\"button\" class=\"close\" aria-label=\"Close\"><span aria-hidden=\"true\">&times;</span></button>"
             //get the element #list and assign it to the string that we just created.
+            }
             $( "#list" ).html(myResult);
+              
         });
         }
         //retrieve the ID of the specific element that we want to delete. Then delete it.
@@ -116,15 +157,16 @@ html(lang='en')
             url: "deleteTODO",
             data: object
             })
-
+         
          getTODO();
         }
 
         $(document).keypress(function(e) {
           if(e.which == 13) {
             addTODO();
-        }
+          }
         });
+        
         $(document).ready(function() {
           // executes when HTML-Document is loaded and DOM is ready
           getTODO();
