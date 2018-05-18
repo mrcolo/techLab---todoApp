@@ -70,6 +70,5 @@ app.post('/addTODO', (req, res) => {
   console.log("Added " + req.body.todo)
 
 });
-.listen()
 //let's start the server
 app.listen(process.env.PORT || 5000, () => console.log('server started'));
